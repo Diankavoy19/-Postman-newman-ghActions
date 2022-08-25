@@ -1,0 +1,664 @@
+{
+	"info": {
+		"_postman_id": "13b47cc1-6712-431d-abad-2d257c2a1710",
+		"name": "store",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "22330348"
+	},
+	"item": [
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "List products",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test response time.\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"//Test status code\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Successful POST request (Status code is not 300,400,500)\", () => {\r",
+									"  pm.expect(pm.response.code).to.not.be.oneOf([300,400,500]);\r",
+									"});\r",
+									"// Testing headers\r",
+									"pm.test(\"Content-Type header is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"//Test response thanks to json schema validation\r",
+									"const schema = {\r",
+									"  \"properties\": {\r",
+									"    \"id\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"   \"name\": {\r",
+									"       \"type\": \"string\"\r",
+									"   },\r",
+									"   \"price\": {\r",
+									"       \"type\": \"number\"\r",
+									"   },\r",
+									"   \"sku\": {\r",
+									"       \"type\": \"number\"\r",
+									"   },\r",
+									"   \"description\": {\r",
+									"       \"type\": \"string\"\r",
+									"   }\r",
+									"  }\r",
+									"};\r",
+									"pm.test('Schema is valid', function() {\r",
+									"  pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
+									"//Check that body contains string \"id\"\r",
+									"pm.test(\"Body contains string\",() => {\r",
+									"  pm.expect(pm.response.text()).to.include(\"id\");\r",
+									"});\r",
+									"//Test for a response header having a particular value\r",
+									"pm.test(\"Content-Type header is application/json\", () => {\r",
+									"  pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json; charset=utf-8');\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get product by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products/3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sorted by Price",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products?sortOrder=ASC&sortKey=price",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "sortOrder",
+									"value": "ASC"
+								},
+								{
+									"key": "sortKey",
+									"value": "price"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test pagination",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products?page=2&pageSize=2",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "2"
+								},
+								{
+									"key": "pageSize",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sorted fields",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products?fields=id,reporter[price] ",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "fields",
+									"value": "id,reporter[price] "
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create product",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"orange\",\r\n    \"price\": 8,\r\n    \"sku\": 123321123,\r\n    \"description\": \"wouh\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update product",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 4,\r\n    \"name\": \"banana\",\r\n    \"price\": 155,\r\n    \"sku\": 123321123,\r\n    \"description\": \"changed description\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove product by ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products/4",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "List orders",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test status code\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"//Test response thanks to json schema validation\r",
+									"const schema = {\r",
+									"  \"properties\": {\r",
+									"    \"id\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"   \"name\": {\r",
+									"       \"type\": \"string\"\r",
+									"   },\r",
+									"   \"sku\": {\r",
+									"       \"type\": \"number\"\r",
+									"   }\r",
+									"  },\r",
+									"  \"required\":[\r",
+									"      \"id\",\r",
+									"      \"name\",\r",
+									"      \"sku\"\r",
+									"  ]\r",
+									"};\r",
+									"pm.test('Schema is valid', function() {\r",
+									"  pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/orders",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get order by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/orders/3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"orders",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"order5\",\r\n    \"sku\": 123425445656765\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/orders",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update order",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 4,\r\n    \"name\": \"order5\",\r\n    \"sku\": 123425445656765\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/orders",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove order by ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/orders/4",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"orders",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "List users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test status code\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"//Test response thanks to json schema validation\r",
+									"const schema = {\r",
+									"  \"properties\": {\r",
+									"    \"id\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"   \"firstName\": {\r",
+									"       \"type\": \"string\"\r",
+									"   },\r",
+									"   \"lastName\": {\r",
+									"       \"type\": \"string\"\r",
+									"   },\r",
+									"   \"email\": {\r",
+									"       \"type\": \"string\"\r",
+									"   },\r",
+									"   \"dateOfBirth\": {\r",
+									"       \"type\": \"string\"\r",
+									"   },\r",
+									"   \"emailVerified\": {\r",
+									"       \"type\": \"boolean\"\r",
+									"   },\r",
+									"   \"signUpDate\": {\r",
+									"       \"type\": \"string\"\r",
+									"   },\r",
+									"   \"status\": {\r",
+									"       \"type\": \"string\"\r",
+									"   },\r",
+									"   \"level\": {\r",
+									"       \"type\": \"string\"\r",
+									"   }\r",
+									"  }\r",
+									"};\r",
+									"pm.test('Schema is valid', function() {\r",
+									"  pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
+									"//Check that there are person who's name is Vesta and email is \"vesta.smith@gmail.com\"\r",
+									"pm.test(\"Person is Vesta\", () => {\r",
+									"  const jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.firstName).to.eql(pm.variables.get(\"Vesta\"));\r",
+									"    pm.expect(jsonData.email).to.eql(pm.variables.get(\"vesta.smith@gmail.com\"));\r",
+									"});\r",
+									"//Check that response is not empty\r",
+									"var jsonData = pm.response.json();\r",
+									"pm.test(\"Response is not empty\", function (){\r",
+									"    pm.expect(jsonData).to.not.have.lengthOf(0);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sorted by First Name",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users?sortOrder=ASC&sortKey=firstName",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "sortOrder",
+									"value": "ASC"
+								},
+								{
+									"key": "sortKey",
+									"value": "firstName"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test pagination",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users?page=1&pageSize=2",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"Dream\",\r\n    \"lastName\": \"Real\",\r\n    \"email\": \"dream.real@gmail.com\",\r\n    \"dateOfBirth\": \"2001-10-99\",\r\n    \"emailVerified\": true,\r\n    \"signUpDate\": \"2019-08-24\",\r\n    \"status\": \"active\",\r\n    \"level\": \"lord\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"Ilon\",\r\n    \"lastName\": \"Mask\",\r\n    \"email\": \"ilon.mask@gmail.com\",\r\n    \"dateOfBirth\": \"2001-10-99\",\r\n    \"emailVerified\": true,\r\n    \"signUpDate\": \"2019-08-24\",\r\n    \"status\": \"active\",\r\n    \"level\": \"lord\",\r\n    \"id\": 10\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove user by ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"10"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+}
