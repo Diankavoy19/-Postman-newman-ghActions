@@ -1,4 +1,4 @@
-name: Test-Build Local
+name: Test-Build-Local
   main-server:
     build: ./
     container_name: main-server
