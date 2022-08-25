@@ -27,7 +27,7 @@ jobs:
        # Make directory to upload the test results
       - name: Make Directory for results
         run: mkdir -p testResults
-        main-server:
+      -main-server:
           build: ./
           container_name: main-server
           image: artofimagination/main-server
