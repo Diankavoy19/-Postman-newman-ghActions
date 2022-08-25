@@ -1,5 +1,5 @@
 name: Test-Build-Local
-  main-server:
+main-server:
     build: ./
     container_name: main-server
     image: artofimagination/main-server
