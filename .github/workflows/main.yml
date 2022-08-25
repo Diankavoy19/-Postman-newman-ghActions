@@ -41,10 +41,10 @@ jobs:
           name: RunReports
           path: ./testResults
       - name: Deploy to pages
-              if: always()
-              uses: peaceiris/actions-gh-pages@v3.7.3
-              with:
-                  github_token: ${{ secrets.GITHUB_TOKEN }}
-                  publish_branch: gh-pages
-                  publish_dir: ./testResults
+        if: always()
+        uses: peaceiris/actions-gh-pages@v3.7.3
+        with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_branch: gh-pages
+            publish_dir: ./testResults
 
