@@ -40,6 +40,7 @@ jobs:
       # Upload the contents of Test Results directory to workspace
       - name: Output the run Details
         uses: actions/upload-artifact@v2
+        if: always()
         with:
           name: RunReports
           path: docs
