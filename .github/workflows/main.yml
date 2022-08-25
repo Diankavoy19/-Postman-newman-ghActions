@@ -43,5 +43,5 @@ jobs:
         if: always()
         with:
           name: RunReports
-          path: docs
+          path: ./docs
 
