@@ -54,9 +54,9 @@
 									"pm.test('Schema is valid', function() {\r",
 									"  pm.response.to.have.jsonSchema(schema);\r",
 									"});\r",
-									"//Check that body contains string \"id\"\r",
+									"//Check that body contains string \"name\"\r",
 									"pm.test(\"Body contains string\",() => {\r",
-									"  pm.expect(pm.response.text()).to.include(\"id\");\r",
+									"  pm.expect(pm.response.text()).to.include(\"name\");\r",
 									"});\r",
 									"//Test for a response header having a particular value\r",
 									"pm.test(\"Content-Type header is application/json\", () => {\r",
@@ -83,7 +83,63 @@
 					"response": []
 				},
 				{
-					"name": "Get product by ID",
+					"name": "Get products by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test response time.\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"//Test status code\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Successful POST request (Status code is not 230,240,250)\", () => {\r",
+									"  pm.expect(pm.response.code).to.not.be.oneOf([230,240,250]);\r",
+									"});\r",
+									"//Test response thanks to json schema validation\r",
+									"const schema = {\r",
+									"  \"properties\": {\r",
+									"    \"id\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"   \"name\": {\r",
+									"       \"type\": \"string\"\r",
+									"   },\r",
+									"   \"price\": {\r",
+									"       \"type\": \"number\"\r",
+									"   },\r",
+									"   \"sku\": {\r",
+									"       \"type\": \"number\"\r",
+									"   },\r",
+									"   \"description\": {\r",
+									"       \"type\": \"string\"\r",
+									"   }\r",
+									"  }\r",
+									"};\r",
+									"pm.test('Schema is valid', function() {\r",
+									"  pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
+									"//Check that body contains string \"id\"\r",
+									"pm.test(\"Body contains string\",() => {\r",
+									"  pm.expect(pm.response.text()).to.include(\"id\");\r",
+									"});\r",
+									"pm.test(\"Check product id\", () => {\r",
+									"  var responseJson = pm.response.json();\r",
+									"  pm.expect(responseJson.id).to.eql(3);\r",
+									"});\r",
+									"//Test for a response header having a particular value\r",
+									"pm.test(\"Content-Type header is application/json\", () => {\r",
+									"  pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json; charset=utf-8');\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -101,12 +157,43 @@
 					"response": []
 				},
 				{
-					"name": "Sorted by Price",
+					"name": "Sorted products by Price",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
+									"//Test response time.\r",
+									"pm.test(\"Response time is not less than 10ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.not.be.below(10);\r",
+									"});\r",
+									"//Test status code\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"//Test response thanks to json schema validation\r",
+									"const schema = {\r",
+									"  \"properties\": {\r",
+									"    \"id\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"   \"name\": {\r",
+									"       \"type\": \"string\"\r",
+									"   },\r",
+									"   \"price\": {\r",
+									"       \"type\": \"number\"\r",
+									"   },\r",
+									"   \"sku\": {\r",
+									"       \"type\": \"number\"\r",
+									"   },\r",
+									"   \"description\": {\r",
+									"       \"type\": \"string\"\r",
+									"   }\r",
+									"  }\r",
+									"};\r",
+									"pm.test('Schema is valid', function() {\r",
+									"  pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
 									""
 								],
 								"type": "text/javascript"
@@ -139,7 +226,193 @@
 					"response": []
 				},
 				{
+					"name": "Sorted products by name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"//Test for a response header having a particular value\r",
+									"pm.test(\"Content-Type header is application/json\", () => {\r",
+									"  pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json; charset=utf-8');\r",
+									"});\r",
+									"//Test response thanks to json schema validation\r",
+									"const schema = {\r",
+									"  \"properties\": {\r",
+									"    \"id\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"   \"name\": {\r",
+									"       \"type\": \"string\"\r",
+									"   },\r",
+									"   \"price\": {\r",
+									"       \"type\": \"number\"\r",
+									"   },\r",
+									"   \"sku\": {\r",
+									"       \"type\": \"number\"\r",
+									"   },\r",
+									"   \"description\": {\r",
+									"       \"type\": \"string\"\r",
+									"   }\r",
+									"  }\r",
+									"};\r",
+									"pm.test('Schema is valid', function() {\r",
+									"  pm.response.to.have.jsonSchema(schema);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products?sortOrder=ASC&sortKey=name",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "sortOrder",
+									"value": "ASC"
+								},
+								{
+									"key": "sortKey",
+									"value": "name"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sorted products by sku",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"//Test for a response header having a particular value\r",
+									"pm.test(\"Content-Type header is application/json\", () => {\r",
+									"  pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json; charset=utf-8');\r",
+									"});\r",
+									"//Test response thanks to json schema validation\r",
+									"const schema = {\r",
+									"  \"properties\": {\r",
+									"    \"id\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"   \"name\": {\r",
+									"       \"type\": \"string\"\r",
+									"   },\r",
+									"   \"price\": {\r",
+									"       \"type\": \"number\"\r",
+									"   },\r",
+									"   \"sku\": {\r",
+									"       \"type\": \"number\"\r",
+									"   },\r",
+									"   \"description\": {\r",
+									"       \"type\": \"string\"\r",
+									"   }\r",
+									"  }\r",
+									"};\r",
+									"pm.test('Schema is valid', function() {\r",
+									"  pm.response.to.have.jsonSchema(schema);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products?sortOrder=ASC&sortKey=sku",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "sortOrder",
+									"value": "ASC"
+								},
+								{
+									"key": "sortKey",
+									"value": "sku"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Test pagination",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code name has string\", function () {\r",
+									"    pm.response.to.have.status(\"OK\");\r",
+									"});\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.not.be.oneOf([201, 202]);\r",
+									"});\r",
+									"pm.test(\"Body matches string\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"banana\");\r",
+									"});\r",
+									"//Test response thanks to json schema validation\r",
+									"const schema = {\r",
+									"  \"properties\": {\r",
+									"    \"id\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"   \"name\": {\r",
+									"       \"type\": \"string\"\r",
+									"   },\r",
+									"   \"price\": {\r",
+									"       \"type\": \"number\"\r",
+									"   },\r",
+									"   \"sku\": {\r",
+									"       \"type\": \"number\"\r",
+									"   },\r",
+									"   \"description\": {\r",
+									"       \"type\": \"string\"\r",
+									"   }\r",
+									"  }\r",
+									"};\r",
+									"pm.test('Schema is valid', function() {\r",
+									"  pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -167,6 +440,46 @@
 				},
 				{
 					"name": "Sorted fields",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"var schema = {\r",
+									"  \"properties\": {\r",
+									"    \"id\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"   \"name\": {\r",
+									"       \"type\": \"string\"\r",
+									"   },\r",
+									"   \"price\": {\r",
+									"       \"type\": \"number\"\r",
+									"   },\r",
+									"   \"sku\": {\r",
+									"       \"type\": \"number\"\r",
+									"   },\r",
+									"   \"description\": {\r",
+									"       \"type\": \"string\"\r",
+									"   }\r",
+									"  }\r",
+									"};\r",
+									"\r",
+									"var data1 = [true, false];\r",
+									"var data2 = [true, 123];\r",
+									"\r",
+									"pm.test('Schema is valid', function () {\r",
+									"    pm.expect(tv4.validate(data1, schema)).to.be.true;\r",
+									"    pm.expect(tv4.validate(data2, schema)).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -190,6 +503,57 @@
 				},
 				{
 					"name": "Create product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test status code\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200,201,202]);\r",
+									"});\r",
+									"pm.test(\"Successful POST request (Status code is not 300,400,500)\", () => {\r",
+									"  pm.expect(pm.response.code).to.not.be.oneOf([300,400,500]);\r",
+									"});\r",
+									"pm.test(\"Check product body\", () => {\r",
+									"  var responseJson = pm.response.json();\r",
+									"  pm.expect(responseJson).to.eql({\r",
+									"          \"name\": \"orange\",\r",
+									"          \"price\": 8,\r",
+									"          \"sku\": 123321123,\r",
+									"          \"description\": \"wouh\",\r",
+									"          \"id\": responseJson.id\r",
+									"      });\r",
+									"});\r",
+									"//Test response thanks to json schema validation\r",
+									"const schema = {\r",
+									"  \"properties\": {\r",
+									"    \"id\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"   \"name\": {\r",
+									"       \"type\": \"string\"\r",
+									"   },\r",
+									"   \"price\": {\r",
+									"       \"type\": \"number\"\r",
+									"   },\r",
+									"   \"sku\": {\r",
+									"       \"type\": \"number\"\r",
+									"   },\r",
+									"   \"description\": {\r",
+									"       \"type\": \"string\"\r",
+									"   }\r",
+									"  }\r",
+									"};\r",
+									"pm.test('Schema is valid', function() {\r",
+									"  pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -216,12 +580,46 @@
 				},
 				{
 					"name": "Update product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Test response thanks to json schema validation\r",
+									"const schema = {\r",
+									"  \"properties\": {\r",
+									"    \"id\": {\r",
+									"      \"type\": \"integer\"\r",
+									"    },\r",
+									"   \"name\": {\r",
+									"       \"type\": \"string\"\r",
+									"   },\r",
+									"   \"price\": {\r",
+									"       \"type\": \"number\"\r",
+									"   },\r",
+									"   \"sku\": {\r",
+									"       \"type\": \"number\"\r",
+									"   },\r",
+									"   \"description\": {\r",
+									"       \"type\": \"string\"\r",
+									"   }\r",
+									"  }\r",
+									"};\r",
+									"pm.test('Schema is valid', function() {\r",
+									"  pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"id\": 4,\r\n    \"name\": \"banana\",\r\n    \"price\": 155,\r\n    \"sku\": 123321123,\r\n    \"description\": \"changed description\"\r\n}",
+							"raw": "{\r\n    \"id\": 5,\r\n    \"name\": \"banana\",\r\n    \"price\": 155,\r\n    \"sku\": 123321123,\r\n    \"description\": \"changed description\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -330,6 +728,33 @@
 							"path": [
 								"orders",
 								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sorted orders by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/orders?sortOrder=ASC&sortKey=id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"orders"
+							],
+							"query": [
+								{
+									"key": "sortOrder",
+									"value": "ASC"
+								},
+								{
+									"key": "sortKey",
+									"value": "id"
+								}
 							]
 						}
 					},
